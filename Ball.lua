@@ -1,10 +1,10 @@
-Player = {
+Ball = {
 --Constants
-SPEED = 4
+SPEED = 2.5
 }
 
 --Constructor
-function Player:new(o)
+function Ball:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
@@ -12,36 +12,41 @@ function Player:new(o)
 end
 
 --Initialize all fields
-function Player:initialize(x, y)
+function Ball:initialize(x, y)
 	self.x = x
 	self.y = y
-	self.sprite = love.graphics.newImage("res/bat_medium.png")
+	self.startX = x
+	self.startY = y
+	self.sprite = love.graphics.newImage("res/ball_blue.png")
 	self.width = self.sprite:getWidth()
 	self.height = self.sprite:getHeight()
-	self.velX = 0
-	self.velY = 0
+	self:setVelocity()
 end
 
-function Player:draw()
+function Ball:draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.draw(self.sprite, self.x, self.y)
 end
 
-function Player:update(dt)
-	--Movement
-	self.velX = 0
-	self.velY = 0
-	self:move(dt)
+function Ball:update(dt)
 	--Keep within window borders
 	if self.x + self.velX >= 0 and self.x + self.width + self.velX <= love.window.getWidth() then
 		self.x = self.x + self.velX
+	else --Out of room
+		self.x = self.startX
+		self.y = self.startY
+		self:setVelocity()
 	end
 	if self.y + self.velY >= 0 and self.y + self.height + self.velY <= love.window.getHeight() then
 		self.y = self.y + self.velY
+	else --Out of room
+		self.x = self.startX
+		self.y = self.startY
+		self:setVelocity()
 	end
 end
 
-function Player:move(dt)
-	if love.keyboard.isDown("w") then self.velY = -Player.SPEED end
-	if love.keyboard.isDown("s") then self.velY = Player.SPEED end
+function Ball:setVelocity()
+	if math.random(2) == 1 then self.velX = Ball.SPEED else self.velX = -Ball.SPEED end
+	if math.random(2) == 1 then self.velY = Ball.SPEED else self.velY = -Ball.SPEED end
 end

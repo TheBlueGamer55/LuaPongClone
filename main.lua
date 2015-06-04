@@ -1,4 +1,5 @@
 require "Player"
+require "Ball"
 
 function love.load()
 	love.graphics.setNewFont(12)
@@ -7,15 +8,19 @@ function love.load()
 	
 	paddle = Player:new()
 	paddle:initialize(16, 240)
+	ball = Ball:new()
+	ball:initialize(320, 240)
 end
 
 function love.draw()
 	love.graphics.print("Hello World", 400, 300)
 	paddle:draw()
+	ball:draw()
 end
 
 function love.update(dt)
 	paddle:update(dt)
+	ball:update(dt)
 end
 
 function love.focus(f)
