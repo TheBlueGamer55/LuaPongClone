@@ -21,6 +21,7 @@ function Ball:initialize(x, y)
 	self.width = self.sprite:getWidth()
 	self.height = self.sprite:getHeight()
 	self:setVelocity()
+	self.collidable = true
 end
 
 function Ball:draw()
@@ -30,23 +31,48 @@ end
 
 function Ball:update(dt)
 	--Keep within window borders
-	if self.x + self.velX >= 0 and self.x + self.width + self.velX <= love.window.getWidth() then
-		self.x = self.x + self.velX
-	else --Out of room
+	if not(self.y + self.velY >= 0 and self.y + self.height + self.velY <= love.window.getHeight()) then --bounce off top & bottom edges
+		self.velY = self.velY * -1 --bounce only happens with this object
+	end
+	if not(self.x + self.velX >= 0 and self.x + self.width + self.velX <= love.window.getWidth()) then -- score
 		self.x = self.startX
 		self.y = self.startY
 		self:setVelocity()
 	end
-	if self.y + self.velY >= 0 and self.y + self.height + self.velY <= love.window.getHeight() then
-		self.y = self.y + self.velY
-	else --Out of room
-		self.x = self.startX
-		self.y = self.startY
-		self:setVelocity()
+	self:move()
+end
+
+function Ball:move()
+	--X Collision
+	if self:checkCollision(paddle, self.x + self.velX, self.y) then
+		while not self:checkCollision(paddle, self.x + SIGNUM(self.velX), self.y) do
+			self.x = self.x + SIGNUM(self.velX)
+		end
+		self.velX = self.velX * -1 --bounce only happens with this object
 	end
+	self.x = self.x + self.velX
+	--Y Collision
+	if self:checkCollision(paddle, self.x, self.y + self.velY) then
+		while not self:checkCollision(paddle, self.x, self.y + SIGNUM(self.velY)) do
+			self.y = self.y + SIGNUM(self.velY)
+		end
+		self.velY = self.velY * -1 --bounce only happens with this object
+	end
+	self.y = self.y + self.velY
 end
 
 function Ball:setVelocity()
 	if math.random(2) == 1 then self.velX = Ball.SPEED else self.velX = -Ball.SPEED end
 	if math.random(2) == 1 then self.velY = Ball.SPEED else self.velY = -Ball.SPEED end
+end
+
+function Ball:checkCollision(other, x, y)
+	if not(other.collidable == nil) then
+		if other.collidable then
+			if(x < other.x + other.width and x + self.width > other.x and y < other.y + other.height and y + self.height > other.y) then
+				return true;
+			end
+		end
+	end
+	return false
 end

@@ -20,6 +20,7 @@ function Player:initialize(x, y)
 	self.height = self.sprite:getHeight()
 	self.velX = 0
 	self.velY = 0
+	self.collidable = true
 end
 
 function Player:draw()
