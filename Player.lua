@@ -45,4 +45,29 @@ end
 function Player:move(dt)
 	if love.keyboard.isDown("w") then self.velY = -Player.SPEED end
 	if love.keyboard.isDown("s") then self.velY = Player.SPEED end
+	--X Collision
+	if self:checkCollision(ball, self.x + self.velX, self.y) then
+		while not self:checkCollision(ball, self.x + SIGNUM(self.velX), self.y) do
+			self.x = self.x + SIGNUM(self.velX)
+		end
+		self.velX = 0 
+	end
+	--Y Collision
+	if self:checkCollision(ball, self.x, self.y + self.velY) then
+		while not self:checkCollision(ball, self.x, self.y + SIGNUM(self.velY)) do
+			self.y = self.y + SIGNUM(self.velY)
+		end
+		self.velY = 0
+	end
+end
+
+function Player:checkCollision(other, x, y)
+	if not(other.collidable == nil) then
+		if other.collidable then
+			if(x < other.x + other.width and x + self.width > other.x and y < other.y + other.height and y + self.height > other.y) then
+				return true;
+			end
+		end
+	end
+	return false
 end
