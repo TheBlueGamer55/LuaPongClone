@@ -1,10 +1,11 @@
-Player = {
+Enemy = {
 --Constants
-SPEED = 5
+SPEED = Ball.SPEED - 0.2,
+RANGE = 20 --The range which the computer paddle can change directions
 }
 
 --Constructor
-function Player:new(o)
+function Enemy:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
@@ -12,7 +13,7 @@ function Player:new(o)
 end
 
 --Initialize all fields
-function Player:initialize(x, y)
+function Enemy:initialize(x, y)
 	self.x = x
 	self.y = y
 	self.sprite = love.graphics.newImage("res/bat_medium.png")
@@ -23,15 +24,12 @@ function Player:initialize(x, y)
 	self.collidable = true
 end
 
-function Player:draw()
+function Enemy:draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.draw(self.sprite, self.x, self.y)
 end
 
-function Player:update(dt)
-	--Movement
-	self.velX = 0
-	self.velY = 0
+function Enemy:update(dt)
 	self:move(dt)
 	--Keep within window borders
 	if self.x + self.velX >= 0 and self.x + self.width + self.velX <= love.window.getWidth() then
@@ -42,9 +40,9 @@ function Player:update(dt)
 	end
 end
 
-function Player:move(dt)
-	if love.keyboard.isDown("w") then self.velY = -Player.SPEED end
-	if love.keyboard.isDown("s") then self.velY = Player.SPEED end
+function Enemy:move(dt)
+	--Follow the ball
+	if ball.y < self.y + (self.height / 2) - Enemy.RANGE then self.velY = -Enemy.SPEED elseif ball.y > self.y + (self.height / 2) + Enemy.RANGE then self.velY = Enemy.SPEED end
 	--X Collision
 	if self:checkCollision(ball, self.x + self.velX, self.y) then
 		while not self:checkCollision(ball, self.x + SIGNUM(self.velX), self.y) do
@@ -61,7 +59,7 @@ function Player:move(dt)
 	end
 end
 
-function Player:checkCollision(other, x, y)
+function Enemy:checkCollision(other, x, y)
 	if not(other.collidable == nil) then
 		if other.collidable then
 			if(x < other.x + other.width and x + self.width > other.x and y < other.y + other.height and y + self.height > other.y) then

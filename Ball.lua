@@ -1,6 +1,6 @@
 Ball = {
 --Constants
-SPEED = 2.5
+SPEED = 5
 }
 
 --Constructor
@@ -50,10 +50,22 @@ function Ball:move()
 		end
 		self.velX = self.velX * -1 --bounce only happens with this object
 	end
+	if self:checkCollision(enemy, self.x + self.velX, self.y) then
+		while not self:checkCollision(enemy, self.x + SIGNUM(self.velX), self.y) do
+			self.x = self.x + SIGNUM(self.velX)
+		end
+		self.velX = self.velX * -1 --bounce only happens with this object
+	end
 	self.x = self.x + self.velX
 	--Y Collision
 	if self:checkCollision(paddle, self.x, self.y + self.velY) then
 		while not self:checkCollision(paddle, self.x, self.y + SIGNUM(self.velY)) do
+			self.y = self.y + SIGNUM(self.velY)
+		end
+		self.velY = self.velY * -1 --bounce only happens with this object
+	end
+	if self:checkCollision(enemy, self.x, self.y + self.velY) then
+		while not self:checkCollision(enemy, self.x, self.y + SIGNUM(self.velY)) do
 			self.y = self.y + SIGNUM(self.velY)
 		end
 		self.velY = self.velY * -1 --bounce only happens with this object
