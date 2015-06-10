@@ -5,7 +5,16 @@ require "Enemy"
 function love.load()
 	love.graphics.setNewFont(12)
 	love.graphics.setColor(0,0,0)
-	love.graphics.setBackgroundColor(144,144,144)
+	love.graphics.setBackgroundColor(255,255,255)
+	
+	bg = love.graphics.newImage("res/metal_blue.png")
+	bgTiles = {}
+	for i = 1, math.ceil(love.graphics.getWidth() / bg:getWidth()) do
+		bgTiles[i] = {}
+		for j = 1, math.ceil(love.graphics.getHeight() / bg:getHeight()) do
+			bgTiles[i][j] = 0
+		end
+	end
 	
 	paddle = Player:new()
 	paddle:initialize(16, 240)
@@ -18,7 +27,7 @@ function love.load()
 end
 
 function love.draw()
-	love.graphics.print("Hello World", 400, 300)
+	drawBackground()
 	paddle:draw()
 	enemy:draw()
 	ball:draw()
@@ -46,6 +55,14 @@ function love.keypressed(key)
    if key == "escape" then
       love.event.quit()
    end
+end
+
+function drawBackground()
+	for i = 1, table.getn(bgTiles) do
+		for j = 1, table.getn(bgTiles[i]) do
+			love.graphics.draw(bg, (i - 1) * bg:getWidth(), (j - 1) * bg:getHeight())
+		end
+	end
 end
 
 function SIGNUM(x)
