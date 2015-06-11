@@ -33,6 +33,7 @@ function Ball:update(dt)
 	--Keep within window borders
 	if not(self.y + self.velY >= 0 and self.y + self.height + self.velY <= love.window.getHeight()) then --bounce off top & bottom edges
 		self.velY = self.velY * -1 --bounce only happens with this object
+		ballHit:play()
 	end
 	if not(self.x + self.velX >= 0 and self.x + self.width + self.velX <= love.window.getWidth()) then -- score
 		self.x = self.startX
@@ -82,6 +83,7 @@ function Ball:checkCollision(other, x, y)
 	if not(other.collidable == nil) then
 		if other.collidable then
 			if(x < other.x + other.width and x + self.width > other.x and y < other.y + other.height and y + self.height > other.y) then
+				ballHit:play()
 				return true;
 			end
 		end
